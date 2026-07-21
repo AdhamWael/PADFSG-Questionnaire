@@ -1,4 +1,7 @@
-const RESPONSES_SHEET = 'Responses';
+const SUBMISSIONS_SHEET = 'Submissions';
+const ANSWERS_SHEET = 'Answers';
+const REPORT_LOG_SHEET = 'Report Log';
+const DASHBOARD_SHEET = 'Dashboard';
 const REPORTS_FOLDER_NAME = 'PADFSG Questionnaire Reports';
 const REPORT_RECIPIENT_EMAIL = ''; // Optional: enter the address that should always receive reports.
 const SEND_COPY_TO_RESPONDENT = false;
@@ -12,19 +15,38 @@ function doPost(e) {
     lock.waitLock(30000);
     let result;
     try {
-      const sheet = getResponseSheet();
+      setupPADFSGWorkbook();
+      const sheet = getSubmissionSheet();
       const duplicate = findSubmission(sheet, data._submissionId);
       if (duplicate) return jsonResponse({ success: true, duplicate: true, reference: duplicate });
       result = appendSubmission(sheet, data);
+      appendAnswers(data, result.reference);
     } finally {
       lock.releaseLock();
     }
 
-    const sheet = getResponseSheet();
-    const report = createSubmissionReport(data, result.reference);
-
-    sheet.getRange(result.rowNumber, result.reportColumn).setValue(report.documentUrl);
-    sheet.getRange(result.rowNumber, result.pdfColumn).setValue(report.pdfUrl);
+    const sheet = getSubmissionSheet();
+    let report;
+    try {
+      report = createSubmissionReport(data, result.reference);
+      updateSubmissionReport(sheet, result.rowNumber, {
+        'Report Status': 'Complete',
+        'Google Drive Folder': report.folderUrl,
+        'Google Document': report.documentUrl,
+        'PDF Report': report.pdfUrl,
+        'Email Status': report.emailedTo,
+        'Report Error': ''
+      });
+      appendReportLog(result.reference, 'Complete', report);
+    } catch (reportError) {
+      updateSubmissionReport(sheet, result.rowNumber, {
+        'Report Status': 'Failed',
+        'Email Status': 'Not sent',
+        'Report Error': reportError.message
+      });
+      appendReportLog(result.reference, 'Failed', { error: reportError.message });
+      throw new Error(`Response saved as ${result.reference}, but report creation failed: ${reportError.message}`);
+    }
 
     return jsonResponse({
       success: true,
@@ -44,12 +66,25 @@ function parseRequest(e) {
 }
 
 function doGet() {
-  return jsonResponse({ success: true, service: 'PADFSG Questionnaire Receiver' });
+  return jsonResponse({ success: true, service: 'PADFSG Questionnaire Receiver', version: '2.0-managed-workbook' });
 }
 
-function getResponseSheet() {
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('PADFSG Reports')
+    .addItem('Set up / refresh workbook', 'setupPADFSGWorkbook')
+    .addItem('Open reports folder', 'showReportsFolderLink')
+    .addToUi();
+}
+
+function showReportsFolderLink() {
+  const folder = getOrCreateFolder(REPORTS_FOLDER_NAME);
+  const html = HtmlService.createHtmlOutput(`<p><a href="${folder.getUrl()}" target="_blank">Open ${REPORTS_FOLDER_NAME}</a></p>`).setWidth(420).setHeight(100);
+  SpreadsheetApp.getUi().showModalDialog(html, 'PADFSG reports');
+}
+
+function getSubmissionSheet() {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  return spreadsheet.getSheetByName(RESPONSES_SHEET) || spreadsheet.insertSheet(RESPONSES_SHEET);
+  return spreadsheet.getSheetByName(SUBMISSIONS_SHEET) || spreadsheet.insertSheet(SUBMISSIONS_SHEET);
 }
 
 function appendSubmission(sheet, data) {
@@ -62,30 +97,22 @@ function appendSubmission(sheet, data) {
     'Respondent Role': data.respRole || '',
     'Response Date': data.respDate || '',
     'Answer Count': data._answerCount || '',
-    'Complete Answer Summary': '',
+    'Proposal Scope': data._proposalScope || '',
+    'Scope Score': data._scopeScore || '',
+    'Pricing Factors': data._pricingFactors || '',
+    'Report Status': 'Pending',
+    'Google Drive Folder': '',
     'Google Document': '',
-    'PDF Report': ''
+    'PDF Report': '',
+    'Email Status': 'Pending',
+    'Report Error': ''
   };
-
-  const excluded = new Set(['respName', 'respEmail', 'respRole', '_submittedAt', '_submissionId', '_answerCount', '_reportAnswers', '_form', '_subject', 'email', 'name']);
-  const dynamicFields = {};
   const readableAnswers = parseReadableAnswers(data._reportAnswers);
   if (readableAnswers.length) {
     if (data._answerCount && readableAnswers.length !== Number(data._answerCount)) throw new Error('Answer completeness check failed.');
-    readableAnswers.forEach(item => {
-      dynamicFields[answerColumnHeader(item)] = safeSheetValue(item.answer);
-    });
-    fixedFields['Complete Answer Summary'] = safeSheetValue(completeAnswerSummary(readableAnswers));
-    dynamicFields['Proposal Scope'] = safeSheetValue(data._proposalScope || '');
-    dynamicFields['Scope Score'] = safeSheetValue(data._scopeScore || '');
-    dynamicFields['Pricing Factors'] = safeSheetValue(data._pricingFactors || '');
-  } else {
-    Object.keys(data).forEach(key => {
-      if (!excluded.has(key)) dynamicFields[formatLabel(key)] = safeSheetValue(normaliseValue(data[key]));
-    });
   }
 
-  const completeData = { ...fixedFields, ...dynamicFields };
+  const completeData = fixedFields;
   let headers = getHeaders(sheet);
 
   if (!headers.length) {
@@ -103,33 +130,150 @@ function appendSubmission(sheet, data) {
 
   sheet.appendRow(headers.map(header => completeData[header] ?? ''));
   const rowNumber = sheet.getLastRow();
-  sheet.getRange(rowNumber, 1, 1, headers.length).setVerticalAlignment('top').setWrap(true);
+  formatSubmissionRow(sheet, rowNumber, headers.length);
 
   return {
     reference: fixedFields.Reference,
     rowNumber,
-    reportColumn: headers.indexOf('Google Document') + 1,
-    pdfColumn: headers.indexOf('PDF Report') + 1
+    rowNumber
   };
 }
 
-function answerColumnHeader(item) {
-  const section = String(item.section || 'Discovery').replace(/\s+/g, ' ').trim();
-  const question = String(item.question || 'Answer').replace(/\s+/g, ' ').trim();
-  return `${section} - ${question}`.slice(0, 240);
+function appendAnswers(data, reference) {
+  const sheet = getOrCreateSheet(ANSWERS_SHEET);
+  const headers = ['Reference', 'Received At', 'Respondent Name', 'Section', 'Question', 'Answer'];
+  ensureSheetHeaders(sheet, headers);
+  const answers = parseReadableAnswers(data._reportAnswers);
+  if (!answers.length) throw new Error('The complete question-and-answer list was not received.');
+  const receivedAt = new Date();
+  const rows = answers.map(item => [
+    reference,
+    receivedAt,
+    safeSheetValue(data.respName || ''),
+    safeSheetValue(item.section || 'Website discovery'),
+    safeSheetValue(item.question || ''),
+    safeSheetValue(item.answer || 'No answer')
+  ]);
+  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, headers.length).setValues(rows).setVerticalAlignment('top').setWrap(true);
 }
 
-function completeAnswerSummary(answers) {
-  let currentSection = '';
-  const lines = [];
-  answers.forEach(item => {
-    if (item.section !== currentSection) {
-      currentSection = item.section;
-      lines.push('', String(currentSection).toUpperCase());
-    }
-    lines.push(`${item.question}\nAnswer: ${item.answer}`);
+function updateSubmissionReport(sheet, rowNumber, updates) {
+  const headers = getHeaders(sheet);
+  Object.keys(updates).forEach(header => {
+    const column = headers.indexOf(header) + 1;
+    if (column) sheet.getRange(rowNumber, column).setValue(safeSheetValue(updates[header]));
   });
-  return lines.join('\n\n').trim();
+}
+
+function appendReportLog(reference, status, report) {
+  const sheet = getOrCreateSheet(REPORT_LOG_SHEET);
+  const headers = ['Timestamp', 'Reference', 'Status', 'Google Drive Folder', 'Google Document', 'PDF Report', 'Email Status', 'Error'];
+  ensureSheetHeaders(sheet, headers);
+  sheet.appendRow([
+    new Date(), reference, status, report.folderUrl || '', report.documentUrl || '', report.pdfUrl || '',
+    report.emailedTo || 'Not sent', report.error || ''
+  ]);
+  formatSubmissionRow(sheet, sheet.getLastRow(), headers.length);
+}
+
+function setupPADFSGWorkbook() {
+  const submissions = getOrCreateSheet(SUBMISSIONS_SHEET);
+  const submissionHeaders = [
+    'Reference', 'Submission ID', 'Received At', 'Respondent Name', 'Respondent Email', 'Respondent Role',
+    'Response Date', 'Answer Count', 'Proposal Scope', 'Scope Score', 'Pricing Factors', 'Report Status',
+    'Google Drive Folder', 'Google Document', 'PDF Report', 'Email Status', 'Report Error'
+  ];
+  ensureSheetHeaders(submissions, submissionHeaders);
+  ensureSheetHeaders(getOrCreateSheet(ANSWERS_SHEET), ['Reference', 'Received At', 'Respondent Name', 'Section', 'Question', 'Answer']);
+  ensureSheetHeaders(getOrCreateSheet(REPORT_LOG_SHEET), ['Timestamp', 'Reference', 'Status', 'Google Drive Folder', 'Google Document', 'PDF Report', 'Email Status', 'Error']);
+  setupDashboard();
+  styleWorkbook();
+}
+
+function getOrCreateSheet(name) {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  return spreadsheet.getSheetByName(name) || spreadsheet.insertSheet(name);
+}
+
+function ensureSheetHeaders(sheet, headers) {
+  if (!sheet.getLastColumn()) {
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  } else {
+    const current = getHeaders(sheet);
+    const missing = headers.filter(header => !current.includes(header));
+    if (missing.length) sheet.getRange(1, current.length + 1, 1, missing.length).setValues([missing]);
+  }
+  formatHeader(sheet, sheet.getLastColumn());
+}
+
+function setupDashboard() {
+  const sheet = getOrCreateSheet(DASHBOARD_SHEET);
+  if (sheet.getLastRow()) return;
+  sheet.getRange('A1:D1').merge().setValue('PADFSG Questionnaire Dashboard');
+  sheet.getRange('A3:A7').setValues([
+    ['Total submissions'], ['Completed reports'], ['Failed reports'], ['Pending reports'], ['Last submission']
+  ]);
+  sheet.getRange('B3').setFormula(`=MAX(COUNTA('${SUBMISSIONS_SHEET}'!A:A)-1,0)`);
+  sheet.getRange('B4').setFormula(`=COUNTIF('${SUBMISSIONS_SHEET}'!L:L,"Complete")`);
+  sheet.getRange('B5').setFormula(`=COUNTIF('${SUBMISSIONS_SHEET}'!L:L,"Failed")`);
+  sheet.getRange('B6').setFormula(`=COUNTIF('${SUBMISSIONS_SHEET}'!L:L,"Pending")`);
+  sheet.getRange('B7').setFormula(`=IFERROR(MAX('${SUBMISSIONS_SHEET}'!C:C),"")`).setNumberFormat('dd mmm yyyy, hh:mm');
+  sheet.getRange('A9:D9').merge().setValue('Where to find everything');
+  sheet.getRange('A10:B13').setValues([
+    ['Submissions', 'One clean management row per response, including report and email status.'],
+    ['Answers', 'One row per question, including “No answer”, suitable for filtering and analysis.'],
+    ['Report Log', 'A history of report creation, links, email delivery, and errors.'],
+    ['Reports Drive folder', getOrCreateFolder(REPORTS_FOLDER_NAME).getUrl()]
+  ]);
+}
+
+function styleWorkbook() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const dashboard = spreadsheet.getSheetByName(DASHBOARD_SHEET);
+  if (dashboard) {
+    dashboard.setTabColor('#9B5A36');
+    dashboard.setColumnWidth(1, 180).setColumnWidth(2, 420);
+    dashboard.getRange('A1:D1').setBackground('#173C31').setFontColor('#FFFFFF').setFontWeight('bold').setFontSize(16).setHorizontalAlignment('center');
+    dashboard.getRange('A3:A7').setBackground('#EAF1EC').setFontWeight('bold').setFontColor('#173C31');
+    dashboard.getRange('B3:B7').setBackground('#F8FAF8').setFontWeight('bold');
+    dashboard.getRange('A9:D9').setBackground('#315C46').setFontColor('#FFFFFF').setFontWeight('bold');
+    dashboard.getRange('A10:B13').setWrap(true).setVerticalAlignment('top');
+    dashboard.setFrozenRows(1);
+  }
+  const submissions = spreadsheet.getSheetByName(SUBMISSIONS_SHEET);
+  if (submissions) {
+    submissions.setTabColor('#315C46');
+    submissions.setFrozenRows(1);
+    if (!submissions.getFilter()) submissions.getRange(1, 1, Math.max(submissions.getLastRow(), 1), submissions.getLastColumn()).createFilter();
+    [1, 2, 4, 5, 9, 11, 13, 14, 15, 16, 17].forEach(column => submissions.setColumnWidth(column, column >= 13 ? 190 : 150));
+    submissions.getRange('C2:C').setNumberFormat('dd mmm yyyy, hh:mm');
+    const statusRange = submissions.getRange('L2:L');
+    submissions.setConditionalFormatRules([
+      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Complete').setBackground('#DCEFE2').setFontColor('#1F5B36').setRanges([statusRange]).build(),
+      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Failed').setBackground('#FCE2E2').setFontColor('#9C1C1C').setRanges([statusRange]).build(),
+      SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('Pending').setBackground('#FFF1CC').setFontColor('#76520A').setRanges([statusRange]).build()
+    ]);
+  }
+  const answers = spreadsheet.getSheetByName(ANSWERS_SHEET);
+  if (answers) {
+    answers.setTabColor('#5E806C');
+    answers.setFrozenRows(1);
+    answers.setColumnWidth(1, 170).setColumnWidth(2, 145).setColumnWidth(3, 170).setColumnWidth(4, 220).setColumnWidth(5, 360).setColumnWidth(6, 320);
+    answers.getRange('B2:B').setNumberFormat('dd mmm yyyy, hh:mm');
+  }
+  const log = spreadsheet.getSheetByName(REPORT_LOG_SHEET);
+  if (log) {
+    log.setTabColor('#C89242');
+    log.setFrozenRows(1);
+    log.setColumnWidth(1, 145).setColumnWidth(2, 170).setColumnWidth(3, 100);
+    for (let column = 4; column <= 8; column += 1) log.setColumnWidth(column, 220);
+    log.getRange('A2:A').setNumberFormat('dd mmm yyyy, hh:mm');
+  }
+}
+
+function formatSubmissionRow(sheet, rowNumber, columnCount) {
+  sheet.getRange(rowNumber, 1, 1, columnCount).setVerticalAlignment('top').setWrap(true);
+  if (rowNumber % 2 === 1) sheet.getRange(rowNumber, 1, 1, columnCount).setBackground('#F7FAF8');
 }
 
 function findSubmission(sheet, submissionId) {
@@ -184,9 +328,11 @@ function createSubmissionReport(data, reference) {
   const pdfName = `${reference} - PADFSG Website Discovery Report.pdf`;
   const pdfBlob = docFile.getAs(MimeType.PDF).setName(pdfName);
   const pdfFile = folder.createFile(pdfBlob);
+  const recipients = getReportRecipients(data);
+  shareReportFiles([docFile, pdfFile], recipients);
   const emailedTo = emailSubmissionReport(data, reference, pdfBlob, document.getUrl(), pdfFile.getUrl());
 
-  return { documentUrl: document.getUrl(), pdfUrl: pdfFile.getUrl(), emailedTo };
+  return { folderUrl: folder.getUrl(), documentUrl: document.getUrl(), pdfUrl: pdfFile.getUrl(), emailedTo };
 }
 
 function appendReportTitle(body, title, subtitle) {
@@ -328,10 +474,7 @@ function buildReportAnalysis(data) {
 }
 
 function emailSubmissionReport(data, reference, pdfBlob, documentUrl, pdfUrl) {
-  const ownerEmail = REPORT_RECIPIENT_EMAIL || Session.getEffectiveUser().getEmail();
-  const recipients = [];
-  if (ownerEmail) recipients.push(ownerEmail);
-  if (SEND_COPY_TO_RESPONDENT && data.respEmail && !recipients.includes(data.respEmail)) recipients.push(data.respEmail);
+  const recipients = getReportRecipients(data);
   if (!recipients.length) return 'Not sent - add REPORT_RECIPIENT_EMAIL';
 
   try {
@@ -348,6 +491,36 @@ function emailSubmissionReport(data, reference, pdfBlob, documentUrl, pdfUrl) {
     console.error(`Report email failed: ${error.message}`);
     return `Not sent - ${error.message}`;
   }
+}
+
+function getReportRecipients(data) {
+  const recipients = [];
+  const configured = String(REPORT_RECIPIENT_EMAIL || '').split(',').map(email => email.trim()).filter(Boolean);
+  configured.forEach(email => { if (!recipients.includes(email)) recipients.push(email); });
+  if (!recipients.length) {
+    try {
+      const spreadsheetFile = DriveApp.getFileById(SpreadsheetApp.getActiveSpreadsheet().getId());
+      const ownerEmail = spreadsheetFile.getOwner().getEmail();
+      if (ownerEmail) recipients.push(ownerEmail);
+    } catch (error) {
+      const effectiveEmail = Session.getEffectiveUser().getEmail();
+      if (effectiveEmail) recipients.push(effectiveEmail);
+    }
+  }
+  if (SEND_COPY_TO_RESPONDENT && data.respEmail && !recipients.includes(data.respEmail)) recipients.push(data.respEmail);
+  return recipients;
+}
+
+function shareReportFiles(files, recipients) {
+  recipients.forEach(email => {
+    files.forEach(file => {
+      try {
+        file.addViewer(email);
+      } catch (error) {
+        console.warn(`Could not share ${file.getName()} with ${email}: ${error.message}`);
+      }
+    });
+  });
 }
 
 function escapeHtml(value) {

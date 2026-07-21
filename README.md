@@ -41,10 +41,10 @@ Formspree is useful as a reliable notification and backup inbox. Keep Google She
 1. Create a Google Sheet named `PADFSG Website Questionnaire Responses`.
 2. Open `Extensions > Apps Script`.
 3. Paste the contents of `google-apps-script.gs`.
-4. Select `Deploy > New deployment > Web app`.
-5. Set `Execute as` to `Me`.
-6. Set access to `Anyone`.
-7. Authorise Sheets, Drive, and Docs access.
+4. Select the `setupPADFSGWorkbook` function and click **Run** once. Approve Sheets, Drive, Docs, and email access. This creates and formats the management sheets.
+5. Select `Deploy > New deployment > Web app`.
+6. Set `Execute as` to `Me`.
+7. Set access to `Anyone`.
 8. Copy the deployed web-app URL.
 9. Open `config.js` and replace:
 
@@ -52,14 +52,19 @@ Formspree is useful as a reliable notification and backup inbox. Keep Google She
 
    with the deployed URL.
 
-Each response will create:
+The workbook is organised into:
 
-- One row in the Responses sheet with one clearly labelled column per visible question; unanswered questions are recorded as `No answer`
-- A `Complete Answer Summary` cell containing a second full copy of every question and answer
+- `Dashboard` — response and report totals plus a guide to the workbook
+- `Submissions` — one clean management row per response, with respondent details, scope, pricing factors, report status, Drive folder, Google Document, PDF, email status, and any error
+- `Answers` — one row per visible question; unanswered questions are recorded as `No answer`
+- `Report Log` — a dated history of successful and failed report generation attempts
+
+Each successful response also creates:
+
 - One formatted Google Docs report with the exact questions and readable answers
 - One PDF report containing an executive summary, inferred direction, scope analysis and recommended next steps
-- Links to both reports inside the sheet
-- An email to the Apps Script owner with the PDF attached
+- A dedicated Drive-folder link plus Document and PDF links in `Submissions`
+- An email to the configured recipient—or the Google Sheet owner by default—with the PDF attached
 
 The browser creates one canonical readable answer list and sends the same list to all destinations. Unanswered visible questions are included as `No answer`. Formspree receives individually numbered question fields plus a `complete_answers` field. Google Sheets records the expected answer count and rejects the submission if the readable-answer list is incomplete. The PDF is generated from that same verified list.
 
@@ -74,8 +79,10 @@ The receiver also uses a submission ID to prevent accidental duplicate rows and 
 Serve the folder over HTTPS (or a local HTTP server), complete the respondent name and email, and submit once. Confirm that:
 
 1. The response appears in Formspree Submissions.
-2. A new row appears on the Google Sheet's `Responses` tab.
-3. The row contains working Google Document and PDF Report links.
+2. A new row appears on the Google Sheet's `Submissions` tab.
+3. The `Report Status` cell becomes `Complete` and the row contains working Drive folder, Google Document, and PDF links.
+4. The `Answers` tab contains every visible question, including `No answer` where appropriate.
+5. The `Email Status` cell shows the address that received the PDF. If anything fails, inspect `Report Error` and the `Report Log` tab.
 
 If Google Sheets does not receive the response, redeploy the Apps Script as a **Web app**, confirm access is **Anyone**, and paste the URL ending in `/exec` into `config.js`. After editing the Apps Script later, create a new deployment version so the live `/exec` endpoint receives the changes.
 
