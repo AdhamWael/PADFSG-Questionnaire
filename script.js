@@ -140,7 +140,53 @@ function collectFormData() {
   data._subject = `New PADFSG website questionnaire from ${data.respName || 'respondent'}`;
   data.respDate ||= new Date().toLocaleDateString('en-GB');
   Object.assign(data, buildScopeProfile(data));
+  data._reportAnswers = JSON.stringify(buildReadableAnswerReport());
   return data;
+}
+
+function readableOptionLabel(input) {
+  const label = input.closest('label');
+  if (!label) return input.value;
+  const title = label.querySelector('strong');
+  if (title) return title.textContent.trim();
+  const textContainer = label.querySelector('span');
+  return (textContainer?.textContent || label.textContent || input.value).replace(/\s+/g, ' ').trim();
+}
+
+function questionForControl(control) {
+  const group = control.closest('.field-group');
+  const groupLabel = group?.querySelector(':scope > .field-label');
+  if (groupLabel) return groupLabel.textContent.replace(/\s+/g, ' ').trim();
+  const directLabel = control.closest('label');
+  const directText = directLabel?.querySelector(':scope > span');
+  return (directText?.textContent || formatFieldName(control.name)).replace(/\s+/g, ' ').trim();
+}
+
+function formatFieldName(name) {
+  return String(name || '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+}
+
+function buildReadableAnswerReport() {
+  const excluded = new Set(['website', 'respName', 'respRole', 'respEmail', 'respDate']);
+  const report = [];
+  visibleSteps.forEach(step => {
+    const section = step.querySelector('.step-title')?.textContent.trim() || 'Website discovery';
+    const controls = Array.from(step.querySelectorAll('input[name], textarea[name], select[name]'));
+    const names = [...new Set(controls.map(control => control.name).filter(name => !excluded.has(name)))];
+    names.forEach(name => {
+      const matching = controls.filter(control => control.name === name && !control.disabled);
+      if (!matching.length) return;
+      const type = matching[0].type;
+      let answers = [];
+      if (type === 'checkbox' || type === 'radio') {
+        answers = matching.filter(control => control.checked).map(readableOptionLabel);
+      } else {
+        answers = matching.map(control => control.value.trim()).filter(Boolean);
+      }
+      if (answers.length) report.push({ section, question: questionForControl(matching[0]), answer: answers.join(', ') });
+    });
+  });
+  return report;
 }
 
 function selectedValues(data, key) {
@@ -180,8 +226,9 @@ function buildScopeProfile(data) {
 
 async function sendToFormspree(data) {
   if (!isConfigured(FORMSPREE_URL, 'YOUR_FORM_ID')) return { service: 'Formspree', configured: false };
+  const { _reportAnswers, ...formspreeData } = data;
   const response = await fetch(FORMSPREE_URL, {
-    method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(data)
+    method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(formspreeData)
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(payload?.errors?.map(error => error.message).join(' ') || 'Formspree rejected the submission.');

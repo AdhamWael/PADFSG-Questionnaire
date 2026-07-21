@@ -55,9 +55,14 @@ Formspree is useful as a reliable notification and backup inbox. Keep Google She
 Each response will create:
 
 - One row in the Responses sheet
-- One Google Docs report
-- One PDF report
+- One formatted Google Docs report with the exact questions and readable answers
+- One PDF report containing an executive summary, inferred direction, scope analysis and recommended next steps
 - Links to both reports inside the sheet
+- An email to the Apps Script owner with the PDF attached
+
+To send reports to a different address, set `REPORT_RECIPIENT_EMAIL` near the top of `google-apps-script.gs`. Set `SEND_COPY_TO_RESPONDENT` to `true` only if respondents should also receive the analysis.
+
+After updating `google-apps-script.gs`, create a new Apps Script deployment version. Existing web-app URLs continue to work, but they do not use changed code until a new version is deployed.
 
 The receiver also uses a submission ID to prevent accidental duplicate rows and protects the sheet from formula injection.
 
