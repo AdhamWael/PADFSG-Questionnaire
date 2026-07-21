@@ -311,11 +311,35 @@ function createSubmissionReport(data, reference) {
   appendInsight(body, 'Delivery and pricing considerations', analysis.delivery);
   appendInsight(body, 'Content readiness', analysis.readiness);
 
+  const proposal = buildSiteProposal(data);
+  appendReportSection(body, 'Automatic website proposal');
+  appendCallout(body, proposal.recommendation);
+  appendInsight(body, 'Primary audiences and journeys', proposal.audienceJourneys);
+  appendInsight(body, 'Recommended design language', proposal.designLanguage);
+  appendInsight(body, 'Recommended implementation approach', proposal.implementation);
+
+  appendReportSection(body, 'Proposed site structure');
+  appendSiteStructure(body, proposal.siteStructure);
+
+  appendReportSection(body, 'Proposed features and services');
+  appendDetailedList(body, proposal.features);
+
+  appendReportSection(body, 'Content and asset requirements');
+  appendDetailedList(body, proposal.contentRequirements);
+
+  appendReportSection(body, 'Suggested delivery plan');
+  appendDeliveryPlan(body, proposal.deliveryPlan);
+
+  appendReportSection(body, 'Assumptions and items to confirm');
+  appendDetailedList(body, proposal.openItems);
+
   appendReportSection(body, 'Recommended next steps');
   analysis.nextSteps.forEach(step => body.appendListItem(step).setGlyphType(DocumentApp.GlyphType.NUMBER));
 
-  appendReportSection(body, 'Questions and answers');
+  body.appendPageBreak();
+  appendReportSection(body, 'Appendix: complete questions and answers');
   const readableAnswers = parseReadableAnswers(data._reportAnswers);
+  appendResponseCoverage(body, readableAnswers);
   appendReadableAnswers(body, readableAnswers.length ? readableAnswers : fallbackAnswers(data));
 
   body.appendHorizontalRule();
@@ -376,6 +400,183 @@ function appendInsight(body, title, text) {
   const heading = body.appendParagraph(title).setHeading(DocumentApp.ParagraphHeading.HEADING2);
   heading.editAsText().setForegroundColor('#9B5A36').setBold(true);
   body.appendParagraph(text);
+}
+
+function appendSiteStructure(body, groups) {
+  groups.forEach(group => {
+    const heading = body.appendParagraph(group.section).setHeading(DocumentApp.ParagraphHeading.HEADING2);
+    heading.editAsText().setForegroundColor('#2F6B49').setBold(true);
+    const rows = [['Page or area', 'Purpose and recommended content']]
+      .concat(group.pages.map(page => [page.name, page.purpose]));
+    const table = body.appendTable(rows);
+    table.getRow(0).getCell(0).setBackgroundColor('#315C46');
+    table.getRow(0).getCell(1).setBackgroundColor('#315C46');
+    table.getRow(0).getCell(0).editAsText().setForegroundColor('#FFFFFF').setBold(true);
+    table.getRow(0).getCell(1).editAsText().setForegroundColor('#FFFFFF').setBold(true);
+    for (let row = 1; row < rows.length; row += 1) {
+      table.getCell(row, 0).setBackgroundColor(row % 2 ? '#EAF1EC' : '#F7FAF8');
+      table.getCell(row, 0).editAsText().setBold(true).setForegroundColor('#173C31');
+      table.getCell(row, 1).editAsText().setForegroundColor('#26352E');
+    }
+    body.appendParagraph('');
+  });
+}
+
+function appendDetailedList(body, items) {
+  items.forEach(item => {
+    const paragraph = body.appendListItem(item.title).setGlyphType(DocumentApp.GlyphType.BULLET);
+    paragraph.editAsText().setBold(true).setForegroundColor('#173C31');
+    const detail = body.appendParagraph(item.detail);
+    detail.setIndentStart(24).setSpacingAfter(6);
+    detail.editAsText().setFontSize(9).setForegroundColor('#5A675F');
+  });
+}
+
+function appendDeliveryPlan(body, stages) {
+  const rows = [['Stage', 'Purpose', 'Main outputs']].concat(stages.map(stage => [stage.name, stage.purpose, stage.outputs]));
+  const table = body.appendTable(rows);
+  for (let column = 0; column < 3; column += 1) {
+    table.getRow(0).getCell(column).setBackgroundColor('#315C46');
+    table.getRow(0).getCell(column).editAsText().setForegroundColor('#FFFFFF').setBold(true);
+  }
+  for (let row = 1; row < rows.length; row += 1) {
+    if (row % 2) for (let column = 0; column < 3; column += 1) table.getCell(row, column).setBackgroundColor('#F7FAF8');
+    table.getCell(row, 0).editAsText().setBold(true).setForegroundColor('#173C31');
+  }
+}
+
+function appendResponseCoverage(body, answers) {
+  if (!answers.length) return;
+  const unanswered = answers.filter(item => String(item.answer).trim().toLowerCase() === 'no answer');
+  const answered = answers.length - unanswered.length;
+  appendCallout(body, `${answers.length} questions recorded: ${answered} answered and ${unanswered.length} marked “No answer”. Every visible question is included below.`);
+}
+
+function buildSiteProposal(data) {
+  const selectedAreas = values(data, 'workAreas');
+  const selectedFeatures = values(data, 'platformFeatures');
+  const selectedHomepage = values(data, 'homepageContent');
+  const languages = [data.mainLanguage || 'english'].concat(values(data, 'additionalLanguages').filter(item => item !== 'none'));
+  const scope = data._proposalScope || 'Website scope to be confirmed';
+
+  const pageGroups = {
+    about: { section: 'Organisation', pages: [
+      { name: 'About PADFSG', purpose: 'Mission, African mandate, history, objectives and organisational profile.' },
+      { name: 'Strategy and impact', purpose: 'Strategic priorities, progress indicators, achievements and evidence of impact.' }
+    ]},
+    governance: { section: 'Leadership and governance', pages: [
+      { name: 'Leadership', purpose: 'President, board and committee profiles with roles, biographies and approved photographs.' },
+      { name: 'Governance', purpose: 'Governance structure, constitution, policies, annual reports and official documents.' }
+    ]},
+    regions: { section: 'African network', pages: [
+      { name: 'Regions and countries', purpose: 'Continental overview with regional groupings, representatives and participation.' },
+      { name: 'Country or regional profiles', purpose: 'Reusable profile pages for contacts, projects, news, events and local achievements.' }
+    ]},
+    projects: { section: 'Programmes and impact', pages: [
+      { name: 'Projects', purpose: 'Filterable overview of current and completed programmes.' },
+      { name: 'Project detail template', purpose: 'Challenge, objectives, partners, locations, activities, results and related resources.' }
+    ]},
+    research: { section: 'Research', pages: [
+      { name: 'Research and publications', purpose: 'Searchable studies, publications, calls for collaboration and research updates.' },
+      { name: 'Publication detail template', purpose: 'Citation, authors, abstract, link or download, topic and related material.' }
+    ]},
+    resources: { section: 'Clinical knowledge', pages: [
+      { name: 'Clinical resource library', purpose: 'Search and filter guidance by topic, audience, language, type and publication year.' },
+      { name: 'Resource detail template', purpose: 'Plain summary, file or external link, authorship, date, language and related resources.' }
+    ]},
+    education: { section: 'Education', pages: [
+      { name: 'Education and webinars', purpose: 'Upcoming learning opportunities, recordings, courses and professional development.' },
+      { name: 'Learning detail template', purpose: 'Learning objectives, speakers, audience, date, registration, materials and certificate details.' }
+    ]},
+    events: { section: 'Events', pages: [
+      { name: 'Events and conferences', purpose: 'Calendar and list views for upcoming and past events.' },
+      { name: 'Event detail template', purpose: 'Programme, venue or joining link, speakers, registration, fees and related downloads.' }
+    ]},
+    membership: { section: 'Membership', pages: [
+      { name: 'Membership overview', purpose: 'Categories, eligibility, benefits, fees and clear application journey.' },
+      { name: 'Join or renew', purpose: 'Application, supporting information, payment or renewal steps according to the selected scope.' },
+      { name: 'Member area', purpose: 'Account, status and private resources only if selected for the first release.' }
+    ]},
+    partners: { section: 'Partnerships', pages: [
+      { name: 'Partners and supporters', purpose: 'Partner recognition grouped by relationship or programme.' },
+      { name: 'Partner with PADFSG', purpose: 'Collaboration opportunities, value proposition and enquiry route.' }
+    ]},
+    news: { section: 'News and media', pages: [
+      { name: 'News', purpose: 'Searchable organisation, regional, project and research updates.' },
+      { name: 'News article template', purpose: 'Headline, date, author, imagery, article body and related content.' },
+      { name: 'Media centre', purpose: 'Press contacts, organisational facts, approved assets and media releases.' }
+    ]},
+    awards: { section: 'Awards', pages: [
+      { name: 'Awards and recognition', purpose: 'Award programmes, eligibility, nomination dates and previous recipients.' }
+    ]},
+    patients: { section: 'Patient information', pages: [
+      { name: 'For patients and families', purpose: 'Clear prevention, warning signs, care guidance and routes to professional help.' },
+      { name: 'Patient topic template', purpose: 'Plain-language explanation, actions, cautions, illustrations and downloadable guidance.' }
+    ]}
+  };
+
+  const siteStructure = [{ section: 'Essential pages', pages: [
+    { name: 'Home', purpose: `Communicate the mission, priority action and selected homepage evidence: ${friendlyList(selectedHomepage, {})}.` },
+    { name: 'Contact', purpose: 'Contact routes, general enquiries, partnership enquiries and appropriate organisational details.' },
+    { name: 'Search', purpose: 'A single route to find pages, resources, news, events and publications.' },
+    { name: 'Privacy, cookies and website terms', purpose: 'Required privacy information, consent choices and website-use terms.' }
+  ]}];
+  selectedAreas.forEach(area => { if (pageGroups[area]) siteStructure.push(pageGroups[area]); });
+
+  const featureDetails = {
+    'site-search': ['Website search', 'Search across key content types with useful result labels and filters where appropriate.'],
+    'member-accounts': ['Member accounts', 'Secure sign-in, profile and access rules; confirm identity, permissions and support process.'],
+    forms: ['Online applications and requests', 'Structured forms with confirmations, notifications, consent and protected data handling.'],
+    payments: ['Online payments', 'Payment journey for fees or donations, with receipts, status tracking and finance hand-off.'],
+    newsletter: ['Newsletter subscription', 'Consent-based signup connected to the selected mailing platform.'],
+    events: ['Event registration', 'Registration, confirmations, reminders and attendance information.'],
+    certificates: ['Certificates', 'Generate or deliver attendance and training certificates against verified participation.'],
+    directory: ['Searchable directory', 'Structured profiles and filters with clear decisions about public and private information.'],
+    'interactive-map': ['Interactive African map', 'Explore participation, representatives, projects or activity by country.'],
+    'resource-tracking': ['Resource-use reporting', 'Measure views and downloads to identify useful clinical content.'],
+    analytics: ['Website analytics', 'Privacy-conscious reporting for audiences, content, referrals, events and conversions.'],
+    translation: ['Multilingual publishing', `Support ${friendlyList(languages, {})} with a repeatable translation and review workflow.`]
+  };
+  const features = selectedFeatures.length
+    ? selectedFeatures.map(feature => ({ title: (featureDetails[feature] || [formatLabel(feature)])[0], detail: (featureDetails[feature] || ['', 'Confirm detailed behaviour during discovery.'])[1] }))
+    : [{ title: 'Core informational website', detail: 'No additional online service was selected; include reliable navigation, search-engine foundations, forms and analytics as agreed.' }];
+
+  const contentRequirements = [
+    { title: 'Organisation foundation', detail: 'Approved mission, history, objectives, legal name, contact details, leadership information and governance documents.' },
+    { title: 'Homepage evidence', detail: `Prepare the selected homepage material: ${friendlyList(selectedHomepage, {})}. Confirm the primary action: ${data.primaryAction || 'No answer'}.` },
+    { title: 'Structured content inventory', detail: `Create one inventory for the proposed sections: ${friendlyList(selectedAreas, {})}. Record owner, status, language, review date and source for each item.` },
+    { title: 'Photography and media', detail: `Prioritise ${friendlyList(values(data, 'visualSubjects'), {})}. Confirm consent, ownership, captions, credits and suitable image quality.` },
+    { title: 'Language preparation', detail: `Main and additional language plan: ${friendlyList(languages, {})}. Agree source language, translation responsibility and clinical review.` },
+    { title: 'Clinical and patient review', detail: 'Apply named subject review, publication dates, version control and review dates to clinical or patient-facing guidance.' }
+  ];
+
+  const deliveryPlan = [
+    { name: '1. Confirm', purpose: 'Turn questionnaire findings into an agreed scope.', outputs: 'Scope workshop, priorities, sitemap, feature list, assumptions and quotation.' },
+    { name: '2. Organise', purpose: 'Define how information will be structured and governed.', outputs: 'Content model, page templates, navigation, content inventory and responsibilities.' },
+    { name: '3. Prototype', purpose: 'Test the inferred experience before full production.', outputs: 'Homepage and key journey prototypes, stakeholder review and agreed design system.' },
+    { name: '4. Build', purpose: 'Create the approved website and selected services.', outputs: 'Responsive templates, content types, integrations, forms, search and analytics.' },
+    { name: '5. Populate and verify', purpose: 'Add content and check accuracy and usability.', outputs: 'Content entry, language review, clinical review, accessibility checks and device testing.' },
+    { name: '6. Launch and improve', purpose: 'Release safely and establish ongoing management.', outputs: 'Launch checks, training, documentation, measurement dashboard and improvement backlog.' }
+  ];
+
+  const allAnswers = parseReadableAnswers(data._reportAnswers);
+  const unanswered = allAnswers.filter(item => String(item.answer).trim().toLowerCase() === 'no answer');
+  const openItems = [
+    { title: 'Scope confirmation', detail: `${scope} with a scope score of ${data._scopeScore || 'not available'}. Validate what belongs in the first release and what should be phased.` },
+    { title: 'Commercial assumptions', detail: `Pricing factors currently identified: ${data._pricingFactors || 'No major factors recorded'}. Confirm external service fees, content volume, integrations and ongoing support.` },
+    { title: 'Content readiness', detail: buildReportAnalysis(data).readiness },
+    { title: 'Unanswered decisions', detail: unanswered.length ? `${unanswered.length} visible questions were not answered. Review them in the appendix before final scope approval.` : 'All visible questions received an answer.' },
+    { title: 'Privacy and ownership', detail: 'Confirm who owns the website, accounts, domain, analytics, mailing data, member data, source files and generated content.' }
+  ];
+
+  const impressions = friendlyList(values(data, 'desiredImpression'), {});
+  const proposedPageCount = siteStructure.reduce((total, group) => total + group.pages.length, 0);
+  const recommendation = `${scope}. Build a focused PADFSG platform around ${selectedAreas.length || 'the confirmed'} selected content areas and ${selectedFeatures.length} selected online services. This first-draft structure proposes approximately ${proposedPageCount} core pages or reusable page types. Validate and phase it in a scope workshop before quotation approval.`;
+  const audienceJourneys = `Prioritise ${friendlyList(values(data, 'primaryAudiences'), {})}. Support the selected visitor priorities: ${friendlyList(values(data, 'visitorPriorities'), {})}. Each audience should reach its most important information or action from the homepage and primary navigation without needing organisational knowledge.`;
+  const designLanguage = `Translate the selected impressions - ${impressions} - into a credible African health organisation system. Use the chosen experience reference (${formatLabel(data.experienceMetaphor || 'balanced professional organisation')}) and information density (${formatLabel(data.informationComfort || 'balanced')}) to guide hierarchy, imagery, spacing and editorial tone.`;
+  const implementation = `Use reusable page templates and structured content so PADFSG can grow without redesigning each section. Responsive behaviour is a baseline requirement. Include secure hosting, backups, performance optimisation, accessibility, privacy, search foundations and measurement in the implementation plan.`;
+
+  return { recommendation, audienceJourneys, designLanguage, implementation, siteStructure, features, contentRequirements, deliveryPlan, openItems };
 }
 
 function parseReadableAnswers(raw) {

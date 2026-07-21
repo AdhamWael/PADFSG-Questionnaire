@@ -62,7 +62,7 @@ The workbook is organised into:
 Each successful response also creates:
 
 - One formatted Google Docs report with the exact questions and readable answers
-- One PDF report containing an executive summary, inferred direction, scope analysis and recommended next steps
+- One detailed PDF proposal containing an executive summary, inferred design direction, automatic sitemap and page purposes, feature scope, content requirements, delivery plan, pricing considerations, assumptions, recommended next steps, and a complete question-and-answer appendix
 - A dedicated Drive-folder link plus Document and PDF links in `Submissions`
 - An email to the configured recipient—or the Google Sheet owner by default—with the PDF attached
 
