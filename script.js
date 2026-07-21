@@ -185,7 +185,11 @@ function buildReadableAnswerReport() {
       } else {
         answers = matching.map(control => control.value.trim()).filter(Boolean);
       }
-      if (answers.length) report.push({ section, question: questionForControl(matching[0]), answer: answers.join(', ') });
+      report.push({
+        section,
+        question: questionForControl(matching[0]),
+        answer: answers.length ? answers.join(', ') : 'No answer'
+      });
     });
   });
   return report;
