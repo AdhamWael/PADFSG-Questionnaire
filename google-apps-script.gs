@@ -165,7 +165,7 @@ function createSubmissionReport(data, reference) {
   appendInsight(body, 'Recommended experience', analysis.experience);
   appendInsight(body, 'Recommended website structure', analysis.structure);
   appendInsight(body, 'Delivery and pricing considerations', analysis.delivery);
-  appendInsight(body, 'Content and approval readiness', analysis.readiness);
+  appendInsight(body, 'Content readiness', analysis.readiness);
 
   appendReportSection(body, 'Recommended next steps');
   analysis.nextSteps.forEach(step => body.appendListItem(step).setGlyphType(DocumentApp.GlyphType.NUMBER));
@@ -315,7 +315,7 @@ function buildReportAnalysis(data) {
   const nextSteps = [
     'Hold a short scope-confirmation meeting to agree the essential first release and any later phases.',
     'Turn the selected website areas into a proposed sitemap and confirm the top visitor journeys.',
-    'Prepare a content checklist with an owner, approval person and deadline for every page.',
+    'Prepare a content checklist with an owner and deadline for every page.',
     'Create a homepage and key-page prototype that reflects the inferred experience and test it with PADFSG stakeholders.',
     'Confirm the services, languages and ongoing support included in the final quotation.',
     'Agree the build, content-entry, review, testing and launch schedule.'

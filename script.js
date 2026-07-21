@@ -227,9 +227,6 @@ function buildScopeProfile(data) {
   if (data.pageRange === 'large') { score += 7; factors.push('more than 25 pages'); }
   if (data.contentPreparation === 'shared') { score += 3; factors.push('shared content preparation'); }
   if (data.contentPreparation === 'full-support') { score += 7; factors.push('full content support'); }
-  if (data.approvalLevel === 'committee' || data.decisionModel === 'committee') { score += 2; factors.push('committee approvals'); }
-  if (data.editorModel === 'regional-editors') { score += 3; factors.push('several publishing teams'); }
-  if (data.editorModel === 'managed-service') { score += 3; factors.push('ongoing content support'); }
 
   const profile = score <= 12 ? 'Focused website' : score <= 25 ? 'Standard organisation website' : score <= 42 ? 'Advanced digital platform' : 'Full service platform';
   return {
