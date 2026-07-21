@@ -54,11 +54,14 @@ Formspree is useful as a reliable notification and backup inbox. Keep Google She
 
 Each response will create:
 
-- One row in the Responses sheet
+- One row in the Responses sheet with one clearly labelled column per answered question
+- A `Complete Answer Summary` cell containing a second full copy of every question and answer
 - One formatted Google Docs report with the exact questions and readable answers
 - One PDF report containing an executive summary, inferred direction, scope analysis and recommended next steps
 - Links to both reports inside the sheet
 - An email to the Apps Script owner with the PDF attached
+
+The browser creates one canonical readable answer list and sends the same list to all destinations. Formspree receives individually numbered question fields plus a `complete_answers` field. Google Sheets records the expected answer count and rejects the submission if the readable-answer list is incomplete. The PDF is generated from that same verified list.
 
 To send reports to a different address, set `REPORT_RECIPIENT_EMAIL` near the top of `google-apps-script.gs`. Set `SEND_COPY_TO_RESPONDENT` to `true` only if respondents should also receive the analysis.
 

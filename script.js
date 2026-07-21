@@ -140,7 +140,9 @@ function collectFormData() {
   data._subject = `New PADFSG website questionnaire from ${data.respName || 'respondent'}`;
   data.respDate ||= new Date().toLocaleDateString('en-GB');
   Object.assign(data, buildScopeProfile(data));
-  data._reportAnswers = JSON.stringify(buildReadableAnswerReport());
+  const readableReport = buildReadableAnswerReport();
+  data._answerCount = readableReport.length;
+  data._reportAnswers = JSON.stringify(readableReport);
   return data;
 }
 
@@ -189,6 +191,19 @@ function buildReadableAnswerReport() {
   return report;
 }
 
+function completeAnswerText(report) {
+  let currentSection = '';
+  const lines = [];
+  report.forEach(item => {
+    if (item.section !== currentSection) {
+      currentSection = item.section;
+      lines.push('', currentSection.toUpperCase());
+    }
+    lines.push(`${item.question}\nAnswer: ${item.answer}`);
+  });
+  return lines.join('\n\n').trim();
+}
+
 function selectedValues(data, key) {
   return String(data[key] || '').split(',').map(value => value.trim()).filter(Boolean);
 }
@@ -226,7 +241,24 @@ function buildScopeProfile(data) {
 
 async function sendToFormspree(data) {
   if (!isConfigured(FORMSPREE_URL, 'YOUR_FORM_ID')) return { service: 'Formspree', configured: false };
-  const { _reportAnswers, ...formspreeData } = data;
+  const report = JSON.parse(data._reportAnswers || '[]');
+  const formspreeData = {
+    name: data.respName || '',
+    email: data.respEmail || '',
+    respondent_role: data.respRole || '',
+    response_date: data.respDate || '',
+    proposal_scope: data._proposalScope || '',
+    scope_score: data._scopeScore || '',
+    answer_count: data._answerCount || report.length,
+    pricing_factors: data._pricingFactors || '',
+    complete_answers: completeAnswerText(report),
+    _subject: data._subject
+  };
+  report.forEach((item, index) => {
+    const number = String(index + 1).padStart(2, '0');
+    const shortQuestion = item.question.replace(/\s+/g, ' ').trim().slice(0, 90);
+    formspreeData[`Q${number} - ${shortQuestion}`] = item.answer;
+  });
   const response = await fetch(FORMSPREE_URL, {
     method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(formspreeData)
   });

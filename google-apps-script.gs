@@ -60,15 +60,30 @@ function appendSubmission(sheet, data) {
     'Respondent Name': data.respName || '',
     'Respondent Email': data.respEmail || '',
     'Respondent Role': data.respRole || '',
+    'Response Date': data.respDate || '',
+    'Answer Count': data._answerCount || '',
+    'Complete Answer Summary': '',
     'Google Document': '',
     'PDF Report': ''
   };
 
-  const excluded = new Set(['respName', 'respEmail', 'respRole', '_submittedAt', '_submissionId', '_reportAnswers', '_form', '_subject', 'email', 'name']);
+  const excluded = new Set(['respName', 'respEmail', 'respRole', '_submittedAt', '_submissionId', '_answerCount', '_reportAnswers', '_form', '_subject', 'email', 'name']);
   const dynamicFields = {};
-  Object.keys(data).forEach(key => {
-    if (!excluded.has(key)) dynamicFields[formatLabel(key)] = safeSheetValue(normaliseValue(data[key]));
-  });
+  const readableAnswers = parseReadableAnswers(data._reportAnswers);
+  if (readableAnswers.length) {
+    if (data._answerCount && readableAnswers.length !== Number(data._answerCount)) throw new Error('Answer completeness check failed.');
+    readableAnswers.forEach(item => {
+      dynamicFields[answerColumnHeader(item)] = safeSheetValue(item.answer);
+    });
+    fixedFields['Complete Answer Summary'] = safeSheetValue(completeAnswerSummary(readableAnswers));
+    dynamicFields['Proposal Scope'] = safeSheetValue(data._proposalScope || '');
+    dynamicFields['Scope Score'] = safeSheetValue(data._scopeScore || '');
+    dynamicFields['Pricing Factors'] = safeSheetValue(data._pricingFactors || '');
+  } else {
+    Object.keys(data).forEach(key => {
+      if (!excluded.has(key)) dynamicFields[formatLabel(key)] = safeSheetValue(normaliseValue(data[key]));
+    });
+  }
 
   const completeData = { ...fixedFields, ...dynamicFields };
   let headers = getHeaders(sheet);
@@ -96,6 +111,25 @@ function appendSubmission(sheet, data) {
     reportColumn: headers.indexOf('Google Document') + 1,
     pdfColumn: headers.indexOf('PDF Report') + 1
   };
+}
+
+function answerColumnHeader(item) {
+  const section = String(item.section || 'Discovery').replace(/\s+/g, ' ').trim();
+  const question = String(item.question || 'Answer').replace(/\s+/g, ' ').trim();
+  return `${section} - ${question}`.slice(0, 240);
+}
+
+function completeAnswerSummary(answers) {
+  let currentSection = '';
+  const lines = [];
+  answers.forEach(item => {
+    if (item.section !== currentSection) {
+      currentSection = item.section;
+      lines.push('', String(currentSection).toUpperCase());
+    }
+    lines.push(`${item.question}\nAnswer: ${item.answer}`);
+  });
+  return lines.join('\n\n').trim();
 }
 
 function findSubmission(sheet, submissionId) {
@@ -169,6 +203,7 @@ function appendMetaTable(body, reference, data) {
     ['Respondent', data.respName || 'Not provided'],
     ['Role', data.respRole || 'Not provided'],
     ['Email', data.respEmail || 'Not provided'],
+    ['Answers recorded', String(data._answerCount || parseReadableAnswers(data._reportAnswers).length || 'Not available')],
     ['Submitted', Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd MMMM yyyy, HH:mm')]
   ];
   const table = body.appendTable(rows);
