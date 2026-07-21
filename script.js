@@ -139,7 +139,43 @@ function collectFormData() {
   data.name = data.respName || '';
   data._subject = `New PADFSG website questionnaire from ${data.respName || 'respondent'}`;
   data.respDate ||= new Date().toLocaleDateString('en-GB');
+  Object.assign(data, buildScopeProfile(data));
   return data;
+}
+
+function selectedValues(data, key) {
+  return String(data[key] || '').split(',').map(value => value.trim()).filter(Boolean);
+}
+
+function buildScopeProfile(data) {
+  let score = selectedValues(data, 'workAreas').length;
+  const factors = [];
+  const featureWeights = {
+    'site-search': 1, 'member-accounts': 5, forms: 2, payments: 4,
+    newsletter: 1, events: 3, certificates: 3, directory: 4,
+    'interactive-map': 4, 'resource-tracking': 2, analytics: 2, translation: 4
+  };
+  selectedValues(data, 'platformFeatures').forEach(feature => { score += featureWeights[feature] || 1; });
+
+  const languages = selectedValues(data, 'additionalLanguages').filter(value => value !== 'none');
+  score += languages.length * 2;
+  if (languages.length) factors.push(`${languages.length} additional language(s)`);
+  if (data.patientContentApproach === 'equal-audience') { score += 2; factors.push('equal professional and public audiences'); }
+  if (data.launchApproach === 'complete') { score += 4; factors.push('complete first release'); }
+  if (data.pageRange === 'medium') score += 3;
+  if (data.pageRange === 'large') { score += 7; factors.push('more than 25 pages'); }
+  if (data.contentPreparation === 'shared') { score += 3; factors.push('shared content preparation'); }
+  if (data.contentPreparation === 'full-support') { score += 7; factors.push('full content support'); }
+  if (data.approvalLevel === 'committee' || data.decisionModel === 'committee') { score += 2; factors.push('committee approvals'); }
+  if (data.editorModel === 'regional-editors') { score += 3; factors.push('several publishing teams'); }
+  if (data.editorModel === 'managed-service') { score += 3; factors.push('ongoing content support'); }
+
+  const profile = score <= 12 ? 'Focused website' : score <= 25 ? 'Standard organisation website' : score <= 42 ? 'Advanced digital platform' : 'Full service platform';
+  return {
+    _proposalScope: profile,
+    _scopeScore: score,
+    _pricingFactors: factors.length ? factors.join('; ') : 'No major complexity factors selected'
+  };
 }
 
 async function sendToFormspree(data) {
