@@ -113,10 +113,10 @@ function getHeaders(sheet) {
 function createSubmissionReport(data, reference) {
   const folder = getOrCreateFolder(REPORTS_FOLDER_NAME);
   const respondentName = data.respName || 'Unnamed Respondent';
-  const document = DocumentApp.create(`${reference} - PADFSG Website Questionnaire - ${respondentName}`);
+  const document = DocumentApp.create(`${reference} - PADFSG Website Discovery - ${respondentName}`);
   const body = document.getBody();
 
-  body.appendParagraph('PADFSG Website Planning Questionnaire').setHeading(DocumentApp.ParagraphHeading.TITLE);
+  body.appendParagraph('PADFSG Website Discovery Questionnaire').setHeading(DocumentApp.ParagraphHeading.TITLE);
   body.appendParagraph(`Reference: ${reference}`);
   body.appendParagraph(`Submitted: ${Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd MMMM yyyy, HH:mm')}`);
   body.appendHorizontalRule();
@@ -139,7 +139,7 @@ function createSubmissionReport(data, reference) {
   document.saveAndClose();
   const docFile = DriveApp.getFileById(document.getId());
   docFile.moveTo(folder);
-  const pdfFile = folder.createFile(docFile.getAs(MimeType.PDF).setName(`${reference} - PADFSG Questionnaire Report.pdf`));
+  const pdfFile = folder.createFile(docFile.getAs(MimeType.PDF).setName(`${reference} - PADFSG Website Discovery Report.pdf`));
 
   return { documentUrl: document.getUrl(), pdfUrl: pdfFile.getUrl() };
 }

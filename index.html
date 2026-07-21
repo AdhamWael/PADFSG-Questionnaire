@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta content="#123c2f" name="theme-color"/>
-<title>PADFSG Website Planning Questionnaire</title>
+<title>PADFSG Website Discovery Questionnaire</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
@@ -16,7 +16,7 @@
 <div aria-hidden="true" class="canopy canopy-right"></div>
 <header class="site-header">
 <div class="header-inner">
-<a aria-label="PADFSG website planning home" class="brand" href="#"><img alt="Pan-African Diabetic Foot Study Group logo" class="brand-logo" src="padfsg-logo.png"/><span><strong>PADFSG</strong><small>Website Planning Questionnaire</small></span></a>
+<a aria-label="PADFSG website discovery home" class="brand" href="#"><img alt="Pan-African Diabetic Foot Study Group logo" class="brand-logo" src="padfsg-logo.png"/><span><strong>PADFSG</strong><small>Website Discovery Questionnaire</small></span></a>
 <div class="header-badge">Pan-African Digital Platform</div>
 </div>
 </header>
@@ -36,7 +36,7 @@
 <p>Your perspective will guide how PADFSG presents its work, connects professionals, shares clinical knowledge, and serves communities across the continent.</p>
 <div class="welcome-actions">
 <button class="hero-start" id="heroStart" type="button">Start the questionnaire</button>
-<span class="hero-time">A focused consultation, completed in a few minutes</span>
+<span class="hero-time">A focused 15–20 minute consultation that becomes the project brief</span>
 </div>
 <div aria-label="Assessment focus" class="hero-principles">
 <span>Clear priorities</span><span>Relevant services</span><span>Practical decisions</span>
@@ -56,74 +56,127 @@
 <span class="ground-bush ground-bush-c"></span>
 </div>
 </section>
-<main aria-label="PADFSG website planning questions" class="wizard-wrap" id="questionnaire">
-
+<main aria-label="PADFSG website discovery questionnaire" class="wizard-wrap" id="questionnaire">
+<div class="discovery-intro">
+<span class="kicker">Website discovery workshop</span>
+<h2>Turn your vision into a clear website brief</h2>
+<p>This consultation uses D-Foot International as a structural reference—not a template to copy. Your answers will define PADFSG’s own audience journeys, visual identity, content, features, technology and launch priorities.</p>
+<div class="discovery-outcomes"><span>Sitemap</span><span>Design direction</span><span>Feature scope</span><span>Delivery roadmap</span></div>
+</div>
 <div aria-label="Question progress" class="step-nav" id="stepNav"></div>
 <form id="discoveryForm">
 <input aria-hidden="true" autocomplete="off" class="form-trap" name="website" tabindex="-1" type="text"/>
 <section class="wizard-step" data-step="1">
-<div class="step-header"><span class="step-eyebrow">Question 1</span><h2 class="step-title">What strategic role should the website play for PADFSG?</h2><p class="step-desc">Select the outcomes that matter most. This establishes the purpose of the platform and the priorities that should shape every design and content decision.</p></div>
-<div class="field-group"><label class="field-label">Select the most important outcomes</label><div class="check-grid">
-<label class="check-item"><input name="strategicRole" type="checkbox" value="authority"/><span>Position PADFSG as a leading African authority in diabetic foot care</span></label>
-<label class="check-item"><input name="strategicRole" type="checkbox" value="membership"/><span>Grow and serve a professional membership community</span></label>
-<label class="check-item"><input name="strategicRole" type="checkbox" value="knowledge"/><span>Disseminate research, guidance, and clinical knowledge</span></label>
-<label class="check-item"><input name="strategicRole" type="checkbox" value="collaboration"/><span>Connect professionals, institutions, and countries across Africa</span></label>
-<label class="check-item"><input name="strategicRole" type="checkbox" value="events"/><span>Promote training, events, webinars, and scientific activities</span></label>
-<label class="check-item"><input name="strategicRole" type="checkbox" value="advocacy"/><span>Support advocacy and influence health policy</span></label>
-<label class="check-item"><input name="strategicRole" type="checkbox" value="funding"/><span>Attract partners, sponsors, grants, and donations</span></label>
-<label class="check-item"><input name="strategicRole" type="checkbox" value="visibility"/><span>Increase PADFSG’s regional and international visibility</span></label>
+<div class="step-header"><span class="step-eyebrow">Foundation</span><h2 class="step-title">What must this website achieve for PADFSG?</h2><p class="step-desc">Choose up to four outcomes that would make the project successful. These will guide every later decision.</p></div>
+<div class="field-group"><label class="field-label">Priority outcomes</label><div class="check-grid" data-max-selections="4">
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="continental-authority"/><span><strong>Build authority</strong><small>Establish PADFSG as Africa’s trusted voice in diabetic foot care.</small></span></label>
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="clinical-knowledge"/><span><strong>Share clinical knowledge</strong><small>Make guidelines, tools and evidence easier to find and use.</small></span></label>
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="professional-network"/><span><strong>Connect the network</strong><small>Link professionals, leaders, institutions and countries.</small></span></label>
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="education"/><span><strong>Grow education</strong><small>Promote courses, webinars, conferences and training.</small></span></label>
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="membership"/><span><strong>Grow membership</strong><small>Attract, onboard and support members.</small></span></label>
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="research"/><span><strong>Advance research</strong><small>Showcase studies and enable scientific collaboration.</small></span></label>
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="advocacy"/><span><strong>Influence care and policy</strong><small>Support prevention, referral pathways and health-system change.</small></span></label>
+<label class="check-item"><input name="strategicGoals" type="checkbox" value="partners"/><span><strong>Attract partners</strong><small>Present credible opportunities for funders, sponsors and institutions.</small></span></label>
 </div></div>
-<div class="field-group"><label class="field-label" for="strategicRoleOther">Other priorities or strategic expectations</label><textarea class="field-textarea" id="strategicRoleOther" name="strategicRoleOther" placeholder="Add any outcome, ambition, or opportunity that should influence the website..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label" for="successMeasures">One year after launch, what evidence would prove the website is working?</label><textarea class="field-textarea" id="successMeasures" name="successMeasures" placeholder="Examples: membership applications, resource downloads, event registrations, country participation, partnership enquiries, search visibility..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label" for="visionStatement">In one sentence, what should PADFSG become through this website?</label><textarea class="field-textarea" id="visionStatement" name="visionStatement" placeholder="Complete the thought: This website should help PADFSG become..." rows="3"></textarea></div>
 </section>
 <section class="wizard-step" data-step="2">
-<div class="step-header"><span class="step-eyebrow">Question 2</span><h2 class="step-title">Which audiences should the platform serve, and what value should each receive?</h2><p class="step-desc">This defines the user journeys, information priorities, and services that should be visible to each audience.</p></div>
-<div class="field-group"><div class="check-grid">
-<label class="check-item"><input name="audiences" type="checkbox" value="clinicians"/><span>Clinicians and multidisciplinary healthcare teams</span></label>
-<label class="check-item"><input name="audiences" type="checkbox" value="researchers"/><span>Researchers, academics, and scientific institutions</span></label>
-<label class="check-item"><input name="audiences" type="checkbox" value="students"/><span>Students, trainees, and early-career professionals</span></label>
-<label class="check-item"><input name="audiences" type="checkbox" value="members"/><span>Current and prospective PADFSG members</span></label>
-<label class="check-item"><input name="audiences" type="checkbox" value="governments"/><span>Ministries, regulators, and public health authorities</span></label>
-<label class="check-item"><input name="audiences" type="checkbox" value="partners"/><span>Professional societies, NGOs, donors, and sponsors</span></label>
-<label class="check-item"><input name="audiences" type="checkbox" value="patients"/><span>Patients, families, and the wider public</span></label>
-<label class="check-item"><input name="audiences" type="checkbox" value="media"/><span>Media and public communication stakeholders</span></label>
+<div class="step-header"><span class="step-eyebrow">Audience</span><h2 class="step-title">Who are we designing for first?</h2><p class="step-desc">A strong site can serve many people, but its homepage and navigation need a clear order of priority.</p></div>
+<div class="field-group"><label class="field-label">Primary audiences — choose up to three</label><div class="check-grid" data-max-selections="3">
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="clinicians"/><span>Clinicians and multidisciplinary care teams</span></label>
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="researchers"/><span>Researchers, academics and institutions</span></label>
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="trainees"/><span>Students and early-career professionals</span></label>
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="members"/><span>Current and prospective members</span></label>
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="policy"/><span>Ministries, policymakers and health authorities</span></label>
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="partners"/><span>Societies, NGOs, donors and sponsors</span></label>
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="patients"/><span>Patients, families and the public</span></label>
+<label class="check-item"><input name="primaryAudiences" type="checkbox" value="media"/><span>Media and public communicators</span></label>
 </div></div>
-<div class="field-group"><label class="field-label" for="audienceValue">Describe the most important need or action for each priority audience</label><textarea class="field-textarea" id="audienceValue" name="audienceValue" placeholder="Example: clinicians access guidelines, members renew and download resources, partners review impact and opportunities..." rows="5"></textarea></div>
-<div class="field-group"><label class="field-label" for="audienceOther">Other audiences or considerations</label><textarea class="field-textarea" id="audienceOther" name="audienceOther" placeholder="Add any audience not listed or any special access need..." rows="3"></textarea></div>
+<div class="field-group"><label class="field-label" for="audienceJourneys">What should each primary audience be able to do in under three clicks?</label><textarea class="field-textarea" id="audienceJourneys" name="audienceJourneys" placeholder="Example: clinicians download guidance; members renew; researchers find collaborators; partners see impact; patients find understandable prevention advice..." rows="5"></textarea></div>
+<div class="field-group"><label class="field-label">How should patient-facing information be handled?</label><div class="choice-cards compact-choices">
+<label class="choice-card"><input name="patientContentApproach" type="radio" value="professional-only"/><span class="choice-letter">A</span><span><strong>Professional platform only</strong><small>Keep content focused on healthcare and research audiences.</small></span></label>
+<label class="choice-card"><input name="patientContentApproach" type="radio" value="dedicated-section"/><span class="choice-letter">B</span><span><strong>Dedicated public section</strong><small>Provide clearly separated, plain-language patient resources.</small></span></label>
+<label class="choice-card"><input name="patientContentApproach" type="radio" value="equal-audience"/><span class="choice-letter">C</span><span><strong>Equal core audience</strong><small>Design public and professional pathways with equal prominence.</small></span></label>
+</div></div>
 </section>
 <section class="wizard-step" data-step="3">
-<div class="step-header"><span class="step-eyebrow">Question 3</span><h2 class="step-title">Which areas of PADFSG’s work should the website represent?</h2><p class="step-desc">Select only the areas PADFSG genuinely wants represented. Your choices will automatically open the relevant follow-up questions.</p></div>
-<div class="field-group"><div class="check-grid">
-<label class="check-item"><input name="workAreas" type="checkbox" value="about"/><span>Organisation profile, history, mission, and strategy</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="governance"/><span>Leadership, governance, committees, and official documents</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="regions"/><span>African regions, national representatives, and country activity</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="projects"/><span>Programmes, projects, and impact</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="research"/><span>Research, publications, studies, and scientific collaboration</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="resources"/><span>Clinical resources, guidelines, tools, and educational materials</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="education"/><span>Training, courses, webinars, and professional development</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="events"/><span>Conferences, meetings, and events</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="membership"/><span>Membership, applications, benefits, and member services</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="partners"/><span>Partners, sponsors, donors, and collaboration opportunities</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="news"/><span>News, newsletters, announcements, and media</span></label>
-<label class="check-item"><input name="workAreas" type="checkbox" value="awards"/><span>Awards, recognition, and professional achievements</span></label>
-<label class="check-item null-choice"><input name="workAreas" type="checkbox" value="none"/><span>No additional service area is required beyond PADFSG’s essential organisation information.</span></label></div></div>
-<div class="field-group"><label class="field-label" for="workAreasOther">Other areas that should be represented</label><textarea class="field-textarea" id="workAreasOther" name="workAreasOther" placeholder="Add any programme, service, committee, initiative, or stakeholder area not listed..." rows="4"></textarea></div>
+<div class="step-header"><span class="step-eyebrow">Reference</span><h2 class="step-title">How should PADFSG relate to D-Foot.org?</h2><p class="step-desc">D-Foot is a useful structural benchmark. This decision clarifies where PADFSG should align and where it must feel distinct.</p></div>
+<div class="field-group"><label class="field-label">Preferred relationship</label><div class="choice-cards">
+<label class="choice-card"><input name="dFootRelationship" type="radio" value="similar-structure"/><span class="choice-letter">A</span><span><strong>Similar structure, PADFSG identity</strong><small>Use comparable sections and navigation, but create a distinct African brand and content voice.</small></span></label>
+<label class="choice-card"><input name="dFootRelationship" type="radio" value="selective-inspiration"/><span class="choice-letter">B</span><span><strong>Selective inspiration</strong><small>Borrow only useful content categories while designing a simpler, more modern experience.</small></span></label>
+<label class="choice-card"><input name="dFootRelationship" type="radio" value="connected-ecosystem"/><span class="choice-letter">C</span><span><strong>Connected ecosystem</strong><small>Position PADFSG as an African network that links clearly to D-Foot and other global bodies.</small></span></label>
+<label class="choice-card"><input name="dFootRelationship" type="radio" value="independent-platform"/><span class="choice-letter">D</span><span><strong>Independent platform</strong><small>Create a different architecture around PADFSG’s own strategy and services.</small></span></label>
+</div></div>
+<div class="field-group"><label class="field-label" for="dFootLikes">What works well on D-Foot.org that PADFSG should learn from?</label><textarea class="field-textarea" id="dFootLikes" name="dFootLikes" placeholder="Consider navigation, governance profiles, projects, resources, events, membership, regional representation or content style..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label" for="dFootAvoid">What feels unclear, outdated, too complex or unsuitable for PADFSG?</label><textarea class="field-textarea" id="dFootAvoid" name="dFootAvoid" placeholder="Identify anything we should simplify, modernise or avoid..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label" for="padfsgDifference">What must make PADFSG unmistakably African and uniquely valuable?</label><textarea class="field-textarea" id="padfsgDifference" name="padfsgDifference" placeholder="Examples: country realities, African clinical leadership, low-resource settings, regional collaboration, multilingual access..." rows="4"></textarea></div>
 </section>
 <section class="wizard-step" data-step="4">
-<div class="step-header"><span class="step-eyebrow">Question 4</span><h2 class="step-title">What should a first-time visitor understand immediately?</h2><p class="step-desc">This defines the homepage message, visual hierarchy, and primary calls to action.</p></div>
-<div class="field-group"><label class="field-label">Select the strongest homepage messages</label><div class="check-grid">
-<label class="check-item"><input name="homepageMessages" type="checkbox" value="identity"/><span>Who PADFSG is and why it exists</span></label>
-<label class="check-item"><input name="homepageMessages" type="checkbox" value="authority"/><span>Its scientific credibility and leadership</span></label>
-<label class="check-item"><input name="homepageMessages" type="checkbox" value="network"/><span>Its Pan-African reach and regional network</span></label>
-<label class="check-item"><input name="homepageMessages" type="checkbox" value="impact"/><span>Its achievements, impact, and current priorities</span></label>
-<label class="check-item"><input name="homepageMessages" type="checkbox" value="knowledge"/><span>Its latest research, resources, and clinical guidance</span></label>
-<label class="check-item"><input name="homepageMessages" type="checkbox" value="participation"/><span>How visitors can join, attend, contribute, or partner</span></label>
-<label class="check-item"><input name="homepageMessages" type="checkbox" value="updates"/><span>Current events, webinars, news, and opportunities</span></label>
+<div class="step-header"><span class="step-eyebrow">Design direction</span><h2 class="step-title">How should the PADFSG website look and feel?</h2><p class="step-desc">Choose the direction that best reflects how PADFSG should be perceived—not simply personal colour preferences.</p></div>
+<div class="field-group"><label class="field-label">Primary design language</label><div class="choice-cards">
+<label class="choice-card"><input name="designLanguage" type="radio" value="scientific-authority"/><span class="choice-letter">A</span><span><strong>Scientific authority</strong><small>Precise, evidence-led, structured and institutionally credible.</small></span></label>
+<label class="choice-card"><input name="designLanguage" type="radio" value="human-clinical"/><span class="choice-letter">B</span><span><strong>Human and clinical</strong><small>Professional, compassionate and centred on improved patient outcomes.</small></span></label>
+<label class="choice-card"><input name="designLanguage" type="radio" value="pan-african-network"/><span class="choice-letter">C</span><span><strong>Pan-African network</strong><small>Confident, connected and expressive of continental collaboration.</small></span></label>
+<label class="choice-card"><input name="designLanguage" type="radio" value="modern-knowledge-platform"/><span class="choice-letter">D</span><span><strong>Modern knowledge platform</strong><small>Clean, highly usable, digital-first and content-rich.</small></span></label>
 </div></div>
-<div class="field-group"><label class="field-label" for="primaryAction">What is the single most important action you want visitors to take?</label><textarea class="field-textarea" id="primaryAction" name="primaryAction" placeholder="Example: become a member, access clinical resources, register for an event, or contact PADFSG..." rows="3"></textarea></div>
-<div class="field-group"><label class="field-label" for="homepageIdeas">Other homepage ideas or messages</label><textarea class="field-textarea" id="homepageIdeas" name="homepageIdeas" placeholder="Add any message, feature, statistic, image, or story you would like the homepage to highlight..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label">Select up to five qualities the design must communicate</label><div class="check-grid" data-max-selections="5">
+<label class="check-item"><input name="brandQualities" type="checkbox" value="credible"/><span>Credible</span></label><label class="check-item"><input name="brandQualities" type="checkbox" value="modern"/><span>Modern</span></label>
+<label class="check-item"><input name="brandQualities" type="checkbox" value="warm"/><span>Warm and human</span></label><label class="check-item"><input name="brandQualities" type="checkbox" value="bold"/><span>Bold and ambitious</span></label>
+<label class="check-item"><input name="brandQualities" type="checkbox" value="academic"/><span>Academic</span></label><label class="check-item"><input name="brandQualities" type="checkbox" value="accessible"/><span>Accessible and clear</span></label>
+<label class="check-item"><input name="brandQualities" type="checkbox" value="continental"/><span>Pan-African</span></label><label class="check-item"><input name="brandQualities" type="checkbox" value="innovative"/><span>Innovative</span></label>
+</div></div>
+<div class="field-group"><label class="field-label">Preferred imagery</label><div class="check-grid">
+<label class="check-item"><input name="imageryStyle" type="checkbox" value="professionals"/><span>African clinicians and multidisciplinary teams</span></label>
+<label class="check-item"><input name="imageryStyle" type="checkbox" value="patients"/><span>Authentic patient and community stories</span></label>
+<label class="check-item"><input name="imageryStyle" type="checkbox" value="research"/><span>Research, education and conference photography</span></label>
+<label class="check-item"><input name="imageryStyle" type="checkbox" value="maps-data"/><span>Maps, data and impact visualisations</span></label>
+<label class="check-item"><input name="imageryStyle" type="checkbox" value="abstract"/><span>Abstract medical and African-inspired graphics</span></label>
+<label class="check-item null-choice"><input name="imageryStyle" type="checkbox" value="minimal"/><span>Minimal imagery; typography and content first</span></label>
+</div></div>
+<div class="field-group"><label class="field-label" for="brandReferences">Share colours, websites, brands or visual styles you like or dislike—and explain why</label><textarea class="field-textarea" id="brandReferences" name="brandReferences" placeholder="Links and short comments are most useful. Also note any colours or imagery that must not be used..." rows="4"></textarea></div>
 </section>
-<section class="wizard-step" data-condition="regions" data-step="5">
-<div class="step-header"><span class="step-eyebrow">Question 5</span><h2 class="step-title">How should PADFSG’s African network be presented?</h2><p class="step-desc">This clarifies how regions, countries, representatives, and local activities should be organised and connected.</p></div>
+<section class="wizard-step" data-step="5">
+<div class="step-header"><span class="step-eyebrow">Information architecture</span><h2 class="step-title">What should the website contain at launch?</h2><p class="step-desc">Select the genuine areas of work the site must support. Your choices open focused follow-up questions and form the first sitemap draft.</p></div>
+<div class="field-group"><label class="field-label">Core website sections</label><div class="check-grid">
+<label class="check-item"><input name="workAreas" type="checkbox" value="about"/><span><strong>About PADFSG</strong><small>Mission, history, strategy and legal profile.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="governance"/><span><strong>Leadership and governance</strong><small>Board, committees and official documents.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="regions"/><span><strong>Regions and countries</strong><small>Representatives, local activity and continental reach.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="projects"/><span><strong>Projects and impact</strong><small>Programmes, results, stories and funding.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="research"/><span><strong>Research and publications</strong><small>Studies, papers and collaboration.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="resources"/><span><strong>Clinical resource library</strong><small>Guidelines, tools and downloadable materials.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="education"/><span><strong>Education and webinars</strong><small>Courses, recordings and professional development.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="events"/><span><strong>Events and conferences</strong><small>Listings, registration and event archives.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="membership"/><span><strong>Membership</strong><small>Benefits, application, payment and member services.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="partners"/><span><strong>Partners and supporters</strong><small>Recognition and collaboration opportunities.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="news"/><span><strong>News and media</strong><small>Updates, newsletters and press materials.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="awards"/><span><strong>Awards and recognition</strong><small>Nominations, recipients and achievements.</small></span></label>
+<label class="check-item"><input name="workAreas" type="checkbox" value="patients"/><span><strong>Patient information</strong><small>Plain-language prevention and care guidance.</small></span></label>
+</div></div>
+<div class="field-group"><label class="field-label" for="sectionPriorities">Which three sections are essential for the first launch, and which can wait?</label><textarea class="field-textarea" id="sectionPriorities" name="sectionPriorities" placeholder="Essential at launch: ... / Phase two: ..." rows="4"></textarea></div>
+</section>
+<section class="wizard-step" data-step="6">
+<div class="step-header"><span class="step-eyebrow">Homepage strategy</span><h2 class="step-title">What should a visitor understand and do immediately?</h2><p class="step-desc">This defines the homepage story, evidence and calls to action.</p></div>
+<div class="field-group"><label class="field-label">Homepage content — choose up to six</label><div class="check-grid" data-max-selections="6">
+<label class="check-item"><input name="homepageContent" type="checkbox" value="mission"/><span>Clear mission and African focus</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="impact"/><span>Impact statistics and outcomes</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="map"/><span>Map of regions and countries</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="resources"/><span>Featured guidelines and resources</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="events"/><span>Upcoming events and webinars</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="projects"/><span>Flagship projects</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="research"/><span>Latest research</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="news"/><span>Latest news</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="leadership-message"/><span>President or leadership message</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="partners"/><span>Partner logos and credibility</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="stories"/><span>Member or patient stories</span></label>
+<label class="check-item"><input name="homepageContent" type="checkbox" value="newsletter"/><span>Newsletter invitation</span></label>
+</div></div>
+<div class="field-group"><label class="field-label" for="primaryAction">What is the single most important homepage action?</label><input class="field-input" id="primaryAction" name="primaryAction" placeholder="Example: Join PADFSG, access clinical guidance, register for training, or partner with us" type="text"/></div>
+<div class="field-group"><label class="field-label" for="homepagePromise">What short promise or headline should visitors remember?</label><textarea class="field-textarea" id="homepagePromise" name="homepagePromise" placeholder="Write a rough idea—we will refine the wording later..." rows="3"></textarea></div>
+<div class="field-group"><label class="field-label" for="credibilityProof">What evidence can PADFSG show to support its credibility?</label><textarea class="field-textarea" id="credibilityProof" name="credibilityProof" placeholder="Countries represented, members, studies, training numbers, partners, endorsements, years active, patient impact..." rows="4"></textarea></div>
+</section>
+<section class="wizard-step" data-condition="regions,governance" data-step="7">
+<div class="step-header"><span class="step-eyebrow">Network and governance</span><h2 class="step-title">How should PADFSG’s leadership and African network be presented?</h2><p class="step-desc">Define the public structure, regional model and level of local participation.</p></div>
 <div class="field-group"><div class="check-grid"><label class="check-item null-choice"><input name="notRequired_5" type="checkbox" value="not-required"/><span>Not required. PADFSG does not want this area or service included.</span></label>
 <label class="check-item"><input name="regionalModel" type="checkbox" value="regional-overview"/><span>Overview of PADFSG’s presence across Africa</span></label>
 <label class="check-item"><input name="regionalModel" type="checkbox" value="regional-pages"/><span>Dedicated profiles for African regions</span></label>
@@ -230,8 +283,33 @@
 <div class="field-group"><label class="field-label" for="partnerApproach">Describe PADFSG’s current or intended partnership model</label><textarea class="field-textarea" id="partnerApproach" name="partnerApproach" placeholder="Include partner types, sponsor expectations, donation needs, approvals, and recognition practices..." rows="5"></textarea></div>
 <div class="field-group"><label class="field-label" for="partnerOther">Other partnership or funding ideas</label><textarea class="field-textarea" id="partnerOther" name="partnerOther" placeholder="Add any collaboration, funding, grant, or supporter experience..." rows="3"></textarea></div>
 </section>
+<section class="wizard-step" data-step="14">
+<div class="step-header"><span class="step-eyebrow">Functions and integrations</span><h2 class="step-title">What should the website do—not just display?</h2><p class="step-desc">Select the capabilities that support real workflows. We will use this to recommend the right technology and delivery phases.</p></div>
+<div class="field-group"><label class="field-label">Required capabilities</label><div class="check-grid">
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="site-search"/><span>Fast site-wide search and filters</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="cms"/><span>Easy content editing by PADFSG staff</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="member-accounts"/><span>Member login and private content</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="forms"/><span>Custom applications and enquiry forms</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="payments"/><span>Online payments or donations</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="newsletter"/><span>Email newsletter signup and automation</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="events"/><span>Event registration and reminders</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="certificates"/><span>Training or attendance certificates</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="directory"/><span>Searchable member or expert directory</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="interactive-map"/><span>Interactive Africa map</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="resource-tracking"/><span>Resource download and usage reporting</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="analytics"/><span>Analytics and impact dashboard</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="social"/><span>Social media and video integration</span></label>
+<label class="check-item"><input name="platformFeatures" type="checkbox" value="translation"/><span>Multilingual publishing workflow</span></label>
+</div></div>
+<div class="field-group"><label class="field-label" for="existingSystems">Which systems must the website connect with?</label><textarea class="field-textarea" id="existingSystems" name="existingSystems" placeholder="Examples: membership database, Mailchimp, Zoom, payment gateway, CRM, Google Workspace, learning platform, social channels... Include links or names if known." rows="5"></textarea></div>
+<div class="field-group"><label class="field-label">Who should be able to update the website?</label><div class="choice-cards compact-choices">
+<label class="choice-card"><input name="editorModel" type="radio" value="central-team"/><span class="choice-letter">A</span><span><strong>Central team</strong><small>One small PADFSG team controls all publishing.</small></span></label>
+<label class="choice-card"><input name="editorModel" type="radio" value="regional-editors"/><span class="choice-letter">B</span><span><strong>Regional contributors</strong><small>Regions or committees draft their own updates for approval.</small></span></label>
+<label class="choice-card"><input name="editorModel" type="radio" value="managed-service"/><span class="choice-letter">C</span><span><strong>Managed externally</strong><small>The web partner handles most publishing and maintenance.</small></span></label>
+</div></div>
+</section>
 <section class="wizard-step" data-step="12">
-<div class="step-header"><span class="step-eyebrow">Question 12</span><h2 class="step-title">Which languages should the website support?</h2><p class="step-desc">Confirm the main website language and any additional languages that visitors should be able to select.</p></div>
+<div class="step-header"><span class="step-eyebrow">Access across Africa</span><h2 class="step-title">Which languages and access needs should we design for?</h2><p class="step-desc">Language, accessibility and connection speed affect the content model and interface from day one.</p></div>
 <div class="field-group"><label class="field-label">Main website language</label><div class="choice-cards compact-choices">
 <label class="choice-card"><input name="mainLanguage" type="radio" value="english"/><span class="choice-letter">A</span><span><strong>English</strong><small>Use English as the main language across the website.</small></span></label>
 <label class="choice-card"><input name="mainLanguage" type="radio" value="french"/><span class="choice-letter">B</span><span><strong>French</strong><small>Use French as the main language across the website.</small></span></label>
@@ -246,11 +324,51 @@
 <label class="check-item"><input name="additionalLanguages" type="checkbox" value="other"/><span>Other African or local language</span></label>
 </div></div>
 <div class="field-group"><label class="field-label" for="languageNotes">Language or accessibility notes</label><textarea class="field-textarea" id="languageNotes" name="languageNotes" placeholder="Specify another language, translation expectations, or needs such as captions, larger text, simple navigation, or low-bandwidth access..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label">Access requirements</label><div class="check-grid">
+<label class="check-item"><input name="accessNeeds" type="checkbox" value="low-bandwidth"/><span>Optimised for slow or costly connections</span></label>
+<label class="check-item"><input name="accessNeeds" type="checkbox" value="mobile-first"/><span>Mobile-first for phone users</span></label>
+<label class="check-item"><input name="accessNeeds" type="checkbox" value="wcag"/><span>Formal accessibility standard (WCAG)</span></label>
+<label class="check-item"><input name="accessNeeds" type="checkbox" value="captions"/><span>Captions and transcripts for media</span></label>
+<label class="check-item"><input name="accessNeeds" type="checkbox" value="print"/><span>Print-friendly clinical resources</span></label>
+<label class="check-item"><input name="accessNeeds" type="checkbox" value="rtl"/><span>Right-to-left Arabic layouts</span></label>
+</div></div>
+</section>
+<section class="wizard-step" data-step="15">
+<div class="step-header"><span class="step-eyebrow">Content operations</span><h2 class="step-title">What content exists, and who will keep it current?</h2><p class="step-desc">A content-rich site succeeds only when ownership and approval are realistic.</p></div>
+<div class="field-group"><label class="field-label">Content currently available</label><div class="check-grid">
+<label class="check-item"><input name="availableContent" type="checkbox" value="brand"/><span>Logo and brand guidelines</span></label>
+<label class="check-item"><input name="availableContent" type="checkbox" value="about"/><span>Mission, history and organisation profile</span></label>
+<label class="check-item"><input name="availableContent" type="checkbox" value="leadership"/><span>Leadership biographies and photos</span></label>
+<label class="check-item"><input name="availableContent" type="checkbox" value="regions"/><span>Regional and country information</span></label>
+<label class="check-item"><input name="availableContent" type="checkbox" value="resources"/><span>Guidelines, publications and resources</span></label>
+<label class="check-item"><input name="availableContent" type="checkbox" value="projects"/><span>Project descriptions and impact evidence</span></label>
+<label class="check-item"><input name="availableContent" type="checkbox" value="photos"/><span>Approved African photography and video</span></label>
+<label class="check-item"><input name="availableContent" type="checkbox" value="policies"/><span>Privacy, membership and governance policies</span></label>
+<label class="check-item null-choice"><input name="availableContent" type="checkbox" value="mostly-new"/><span>Most content still needs to be created</span></label>
+</div></div>
+<div class="field-group"><label class="field-label" for="contentOwners">Who will supply, review, approve and update each type of content?</label><textarea class="field-textarea" id="contentOwners" name="contentOwners" placeholder="Name roles or committees and describe the approval process..." rows="5"></textarea></div>
+<div class="field-group"><label class="field-label" for="contentFrequency">How often do you realistically expect news, events, research and resources to be updated?</label><textarea class="field-textarea" id="contentFrequency" name="contentFrequency" placeholder="Example: news monthly, webinars quarterly, guidelines when issued, country updates twice a year..." rows="4"></textarea></div>
+</section>
+<section class="wizard-step" data-step="16">
+<div class="step-header"><span class="step-eyebrow">Scope and delivery</span><h2 class="step-title">What constraints should shape the recommended approach?</h2><p class="step-desc">These answers help us separate the essential launch from later phases and avoid proposing the wrong technical solution.</p></div>
+<div class="field-group"><label class="field-label">Preferred launch approach</label><div class="choice-cards">
+<label class="choice-card"><input name="launchApproach" type="radio" value="focused"/><span class="choice-letter">A</span><span><strong>Focused first release</strong><small>Launch the core public website quickly, then add advanced services.</small></span></label>
+<label class="choice-card"><input name="launchApproach" type="radio" value="complete"/><span class="choice-letter">B</span><span><strong>Complete platform at launch</strong><small>Include the main content, membership and service workflows from day one.</small></span></label>
+<label class="choice-card"><input name="launchApproach" type="radio" value="recommend"/><span class="choice-letter">C</span><span><strong>Recommend the phases</strong><small>Assess priorities, readiness and budget before proposing the roadmap.</small></span></label>
+</div></div>
+<div class="number-grid">
+<label><span>Target launch date</span><input class="field-input" name="targetLaunch" type="date"/></label>
+<label><span>Expected project budget or range</span><input class="field-input" name="budgetRange" placeholder="Currency and approximate range" type="text"/></label>
+</div>
+<div class="field-group"><label class="field-label" for="mustHaveScope">What absolutely must be included in the first release?</label><textarea class="field-textarea" id="mustHaveScope" name="mustHaveScope" placeholder="List the non-negotiable pages, functions or integrations..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label" for="futureScope">What would be valuable later but is not essential for launch?</label><textarea class="field-textarea" id="futureScope" name="futureScope" placeholder="List phase-two ideas or long-term ambitions..." rows="4"></textarea></div>
+<div class="field-group"><label class="field-label" for="decisionProcess">Who makes final decisions, and who else must approve the website?</label><textarea class="field-textarea" id="decisionProcess" name="decisionProcess" placeholder="Names or roles, committee approval, sponsor or legal review, expected response times..." rows="4"></textarea></div>
 </section>
 <section class="wizard-step" data-step="13">
-<div class="step-header"><span class="step-eyebrow">Question 13</span><h2 class="step-title">How should the website support PADFSG’s visibility and reputation?</h2><p class="step-desc">Choose the result you expect. Each option represents a different level of search planning, content preparation, and ongoing effort.</p></div>
+<div class="step-header"><span class="step-eyebrow">Visibility and final priorities</span><h2 class="step-title">How should people discover PADFSG—and what have we not asked?</h2><p class="step-desc">Finish with the reputation, search and organisational context that should influence our recommendation.</p></div>
 <div class="field-group"><div class="choice-cards"><label class="choice-card"><input name="visibilityLevel" type="radio" value="a"/><span class="choice-letter">A</span><span><strong>Essential website visibility</strong><small>Make the website easy for Google to read, index, and display correctly. Include page titles, descriptions, sitemap, analytics, and basic search settings.</small></span></label><label class="choice-card"><input name="visibilityLevel" type="radio" value="b"/><span class="choice-letter">B</span><span><strong>Visibility for priority topics and countries</strong><small>Plan important pages around selected diabetic-foot topics, African regions, professional audiences, and services so PADFSG can appear for relevant searches.</small></span></label><label class="choice-card"><input name="visibilityLevel" type="radio" value="c"/><span class="choice-letter">C</span><span><strong>Scientific and professional authority</strong><small>Develop the website as a recognised knowledge platform through expert profiles, research content, regular publications, strong internal linking, and continued search improvement.</small></span></label><label class="choice-card"><input name="visibilityLevel" type="radio" value="d"/><span class="choice-letter">D</span><span><strong>Assessment and recommendation first</strong><small>Review PADFSG’s goals and available content, then recommend the most suitable visibility level and the work required to achieve it.</small></span></label><label class="choice-card"><input name="visibilityLevel" type="radio" value="e"/><span class="choice-letter">E</span><span><strong>No search-focused work beyond normal website setup</strong><small>Create the website without a separate search visibility or content optimisation service.</small></span></label></div></div>
 <div class="field-group"><label class="field-label" for="visibilityTopics">Which topics, countries, or professional audiences should PADFSG be known for online?</label><textarea class="field-textarea" id="visibilityTopics" name="visibilityTopics" placeholder="Example: diabetic foot prevention in Africa, multidisciplinary care, clinical training, regional research, PADFSG membership..." rows="5"></textarea></div>
+<div class="field-group"><label class="field-label" for="risksConcerns">What concerns or risks could prevent this website from succeeding?</label><textarea class="field-textarea" id="risksConcerns" name="risksConcerns" placeholder="Examples: content delays, limited staff time, approvals, privacy, funding, technical support, translation or stakeholder disagreement..." rows="4"></textarea></div>
 <div class="field-group"><label class="field-label" for="finalIdeas">Final notes, ideas, or expectations</label><textarea class="field-textarea" id="finalIdeas" name="finalIdeas" placeholder="Use this space for any concept, feature, concern, or opportunity that has not been covered..." rows="5"></textarea></div>
 <div class="respondent-block">
 <div><span class="kicker">Respondent details</span><h3 class="respondent-title">Who completed this assessment?</h3></div>
@@ -285,10 +403,10 @@
 <small>Your responses will guide the website structure, content and user experience.</small>
 </div>
 </div>
-<div class="footer-bottom">PADFSG Website Planning Questionnaire</div>
+<div class="footer-bottom">PADFSG Website Discovery Questionnaire</div>
 </footer>
 <div aria-labelledby="successTitle" aria-modal="true" class="success-screen hidden" id="successScreen" role="dialog">
-<div class="success-inner"><div aria-hidden="true" class="success-icon">✓</div><span class="kicker">Thank you</span><h2 class="success-title" id="successTitle">Questionnaire complete</h2><p class="success-message">Your answers have been received and will guide the PADFSG website structure, content, features, and professional proposal.</p><div class="success-ref" id="successRef"></div></div>
+<div class="success-inner"><div aria-hidden="true" class="success-icon">✓</div><span class="kicker">Thank you</span><h2 class="success-title" id="successTitle">Discovery complete</h2><p class="success-message">Your answers will be translated into PADFSG’s sitemap, design direction, feature scope, content plan and recommended delivery roadmap.</p><div class="success-ref" id="successRef"></div></div>
 </div>
 <script src="config.js"></script>
 <script src="script.js"></script>

@@ -18,6 +18,16 @@ const submissionStatus = document.getElementById('submissionStatus');
 
 const isConfigured = (url, placeholder) => Boolean(url && !url.includes(placeholder));
 
+function enforceSelectionLimit(group) {
+  const step = group.closest('.wizard-step');
+  if (step && !visibleSteps.includes(step)) return;
+  const limit = Number(group.dataset.maxSelections);
+  const boxes = Array.from(group.querySelectorAll('input[type="checkbox"]'));
+  const checked = boxes.filter(box => box.checked).length;
+  boxes.forEach(box => { box.disabled = !box.checked && checked >= limit; });
+  group.classList.toggle('selection-limit-reached', checked >= limit);
+}
+
 function selectedWorkAreas() {
   return new Set(Array.from(document.querySelectorAll('input[name="workAreas"]:checked')).map(input => input.value));
 }
@@ -39,6 +49,11 @@ function scrollToQuestion() {
 function rebuildFlow(keepCurrent = true) {
   const currentElement = visibleSteps[currentVisibleIndex];
   visibleSteps = allSteps.filter(step => shouldShow(step, selectedWorkAreas()));
+  allSteps.forEach(step => {
+    const excluded = !visibleSteps.includes(step);
+    step.querySelectorAll('input, textarea, select').forEach(control => { control.disabled = excluded; });
+  });
+  document.querySelectorAll('[data-max-selections]').forEach(enforceSelectionLimit);
   currentVisibleIndex = keepCurrent && visibleSteps.includes(currentElement)
     ? visibleSteps.indexOf(currentElement)
     : Math.min(currentVisibleIndex, Math.max(visibleSteps.length - 1, 0));
@@ -67,7 +82,10 @@ function showCurrentStep(scroll = true) {
   current.setAttribute('aria-hidden', 'false');
   visibleSteps.forEach((step, index) => {
     const eye = step.querySelector('.step-eyebrow');
-    if (eye) eye.textContent = `Question ${index + 1} of ${visibleSteps.length}`;
+    if (eye) {
+      eye.dataset.label ||= eye.textContent.trim().replace(/^Question\s+\d+$/i, 'Discovery');
+      eye.textContent = `${eye.dataset.label} · ${index + 1} of ${visibleSteps.length}`;
+    }
   });
   document.querySelectorAll('.step-dot').forEach((dot, index) => {
     dot.classList.toggle('active', index === currentVisibleIndex);
@@ -90,6 +108,11 @@ btnPrev.addEventListener('click', () => {
 
 document.querySelectorAll('input[name="workAreas"]').forEach(input => input.addEventListener('change', () => rebuildFlow(true)));
 
+document.querySelectorAll('[data-max-selections]').forEach(group => {
+  group.querySelectorAll('input[type="checkbox"]').forEach(box => box.addEventListener('change', () => enforceSelectionLimit(group)));
+  enforceSelectionLimit(group);
+});
+
 document.querySelectorAll('.null-choice input').forEach(input => {
   input.addEventListener('change', () => {
     if (!input.checked) return;
@@ -111,7 +134,7 @@ function collectFormData() {
   }
   data._submissionId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   data._submittedAt = new Date().toISOString();
-  data._form = 'PADFSG Website Planning Questionnaire';
+  data._form = 'PADFSG Website Discovery Questionnaire';
   data.email = data.respEmail || '';
   data.name = data.respName || '';
   data._subject = `New PADFSG website questionnaire from ${data.respName || 'respondent'}`;

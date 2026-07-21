@@ -1,6 +1,8 @@
-# PADFSG Website Planning Questionnaire
+# PADFSG Website Discovery Questionnaire
 
 Open `index.html` in a browser to test the questionnaire.
+
+This adaptive client-discovery form turns stakeholder answers into decisions for the PADFSG website sitemap, design language, audience journeys, content model, functional scope, integrations and phased delivery roadmap. D-Foot International is used as a structural benchmark while preserving a distinct Pan-African identity and service model.
 
 ## What was updated
 
@@ -9,6 +11,8 @@ Open `index.html` in a browser to test the questionnaire.
 - Next, Previous, and question-dot navigation scroll to the active question, not to the top of the website.
 - The hero button scrolls directly to Question 1.
 - Formspree and Google Sheets can run together. Formspree provides email notifications and a submission inbox. Google Sheets stores structured responses and creates Google Docs and PDF reports.
+- The questionnaire now covers strategy, audiences, D-Foot comparisons, brand direction, homepage hierarchy, regional structure, membership, research, resources, education, events, projects, partnerships, integrations, accessibility, content governance, budget, phasing, search visibility and project risks.
+- Follow-up sections appear only when the client selects the matching website area.
 
 ## Connect Formspree
 
